@@ -104,7 +104,8 @@ int main(void)
 }
 ```
 
-Hint:
+
 ![](https://i.imgur.com/7cYmw2C.png)
 
+#### Hint:
 #### 查看Discovery kit with STM32F407VG MCU 得知user button為上拉電阻。
