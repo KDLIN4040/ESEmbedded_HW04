@@ -44,4 +44,66 @@ This is the hw04 sample. Please follow the steps below.
 
 --------------------
 
-Take your note here if you want. (Optional)
+LAB4
+===
+## 本周作業
+開機後無窮等待，等按鈕按下後，藍色 LED 燈不斷閃爍。
+### 實驗過程:
+
+#### Step1:
+在上課中我們已經完成LED的設置，以下只針對BUTTON的設置做說明:
+由[Discovery kit with STM32F407VG MCU](http://www.nc.es.ncku.edu.tw/course/embedded/pdf/STM32F4DISCOVERY.pdf)目錄中的 **6-4 Push buttons**(p.16)裡面有說明**User button** 為 PA0。
+![](https://i.imgur.com/yMJkN0O.png)
+
+
+#### Step2:
+在使用 GPIO 前，必須啟用 RCC (Reset and clock control) 中對應的 bit。
+* GPIOA為AHB1匯流排
+![](https://i.imgur.com/mL6X3cj.png)
+
+
+#### Step3:
+設定 GPIOA 運作的方式，依序設置 MODER、OTYPER、OSPEEDR、PUPDR 四個 register 。
+
+![](https://i.imgur.com/CsbYdu0.png)
+
+* MODER(0) = 00 
+
+* OTYPER(0) = default
+
+* OSPEEDER(0) = default
+
+* PUPDR(0) = 00
+
+#### Step4:
+利用GPIOx_IDR 讀取BUTTON(PA0)的狀態。
+![](https://i.imgur.com/ojWqegq.png)
+
+#### 程式碼:
+```C
+#include <stdint.h>
+#include "blink.h"
+#include "reg.h"
+
+int main(void)
+{   
+	SET_BIT(RCC_BASE + RCC_AHB1ENR_OFFSET, GPIO_EN_BIT(GPIO_PORTA));
+
+	//MODER0 = 00 => General purpose input mode
+        CLEAR_BIT(GPIO_BASE(GPIO_PORTA) + GPIOx_MODER_OFFSET, MODERy_1_BIT(GPIO_PORTA));
+	CLEAR_BIT(GPIO_BASE(GPIO_PORTA) + GPIOx_MODER_OFFSET, MODERy_0_BIT(GPIO_PORTA));
+
+	//PUPDR0 = 00 => No pull-up, pull-down
+        CLEAR_BIT(GPIO_BASE(GPIO_PORTA) + GPIOx_PUPDR_OFFSET, PUPDRy_1_BIT(GPIO_PORTA));
+	CLEAR_BIT(GPIO_BASE(GPIO_PORTA) + GPIOx_PUPDR_OFFSET, PUPDRy_0_BIT(GPIO_PORTA));
+	
+        //無窮等待直到按鈕按下
+	while(!READ_BIT(GPIO_BASE(GPIO_PORTA) + GPIOx_IDR_OFFSET, IDR_0_BIT(GPIO_PORTA)));
+	blink(LED_BLUE);
+
+}
+```
+
+Hint:
+![](https://i.imgur.com/7cYmw2C.png)
+查看[Discovery kit with STM32F407VG MCU](http://www.nc.es.ncku.edu.tw/course/embedded/pdf/STM32F4DISCOVERY.pdf)得知user button為上拉電阻。
