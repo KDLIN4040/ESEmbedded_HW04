@@ -58,7 +58,7 @@ LAB4
 
 #### Step2:
 在使用 GPIO 前，必須啟用 RCC (Reset and clock control) 中對應的 bit。
-* GPIOA為AHB1匯流排
+#### GPIOA為AHB1匯流排
 ![](https://i.imgur.com/mL6X3cj.png)
 
 
